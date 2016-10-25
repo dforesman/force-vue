@@ -25,6 +25,7 @@
 <script>
 import { MdlButton, MdlTextfield, directives } from 'vue-mdl';
 import planet from '../api/planet';
+import picture from '../api/picture';
 
 export default {
   components: {
@@ -60,14 +61,14 @@ export default {
       const randomPlanetId = Math.floor((Math.random() * 61) + 1);
       planet.fetch(randomPlanetId).then((planetData) => {
         this.planetData = Object.assign(this.planetData, planetData);
-        planet.getPicture(this.planetData.name).then((data) => {
+        picture.getPicture(this.planetData.name).then((data) => {
           this.loading = false;
           if (data) {
             this.planetImage = data;
             this.imageShow = true;
           } else {
             this.planetImage = '';
-            this.planetImageMsg = 'No image found.';
+            this.planetImageMsg = `No image found for ${this.planetData.name}`;
           }
         });
       });
@@ -82,7 +83,7 @@ h1 {
   color: black;
 }
 figure img {
-  width: 285px;
+  width: 100%;
 }
 .mdl-card__media {
   background-color: #FFF;

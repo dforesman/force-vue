@@ -17,11 +17,19 @@
     <mdl-textfield data-qa="mgltTextbox" floating-label="MGLT" :value.sync="starshipData.MGLT"></mdl-textfield>
     <mdl-textfield data-qa="starshipClassTextbox" floating-label="Starship Class" :value.sync="starshipData.starship_class"></mdl-textfield>
   </div>
+  <div class="mdl-cell mdl-card mdl-shadow--4dp">
+    <figure class="mdl-card__media">
+      <div v-show="loading" class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+      <img v-show="imageShow" :src.sync="starshipImage">
+      <span>{{starshipImageMsg}}</span>
+    </figure>
+  </div>
 </template>
 
 <script>
 import { MdlButton, MdlTextfield, directives } from 'vue-mdl';
 import starship from '../api/starship';
+import picture from '../api/picture';
 
 export default {
   components: {
@@ -47,6 +55,10 @@ export default {
         starship_class: '',
         pilots: '',
       },
+      starshipImage: '',
+      starshipImageMsg: '',
+      imageShow: false,
+      loading: false,
     };
   },
   methods: {
@@ -54,8 +66,30 @@ export default {
       const randomStarshipId = Math.floor((Math.random() * 37) + 1);
       starship.fetch(randomStarshipId).then((starshipData) => {
         this.starshipData = Object.assign(this.starshipData, starshipData);
+        picture.getPicture(this.starshipData.name).then((data) => {
+          this.loading = false;
+          if (data) {
+            this.starshipImage = data;
+            this.imageShow = true;
+          } else {
+            this.starshipImage = '';
+            this.starshipImageMsg = `No image found for ${this.starshipData.name}`;
+          }
+        });
       });
     },
   },
 };
 </script>
+
+<style scoped>
+h1 {
+  color: black;
+}
+figure img {
+  width: 100%;
+}
+.mdl-card__media {
+  background-color: #FFF;
+}
+</style>

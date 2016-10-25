@@ -23,6 +23,7 @@
 <script>
 import { MdlButton, MdlTextfield, directives } from 'vue-mdl';
 import person from '../api/person';
+import picture from '../api/picture';
 
 export default {
   components: {
@@ -55,14 +56,14 @@ export default {
       const randomPersonId = Math.floor((Math.random() * 87) + 1);
       person.fetch(randomPersonId).then((personData) => {
         this.personData = Object.assign(this.personData, personData);
-        person.getPicture(this.personData.name).then((data) => {
+        picture.getPicture(this.personData.name).then((data) => {
           this.loading = false;
           if (data) {
             this.personImage = data;
             this.imageShow = true;
           } else {
             this.personImage = '';
-            this.personImageMsg = 'No image found.';
+            this.personImageMsg = `No image found for ${this.personData.name}`;
           }
         });
       });
@@ -77,7 +78,7 @@ h1 {
   color: black;
 }
 figure img {
-  width: 285px;
+  width: 100%;
 }
 .mdl-card__media {
   background-color: #FFF;
